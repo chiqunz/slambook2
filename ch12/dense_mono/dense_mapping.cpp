@@ -25,7 +25,7 @@ using namespace cv;
 
 // ------------------------------------------------------------------
 // parameters
-const int boarder = 0;         // border pixels
+const int boarder = 20;         // border pixels
 const int width = 640;          // image width
 const int height = 480;         // image height
 const double fx = 518.0f;       // camera parameters
