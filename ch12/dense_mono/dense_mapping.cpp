@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
         update(ref, curr, pose_T_C_R, depth, depth_cov2);
         imshow("image", curr);
         cout << "estimation for image " << index << " returns, saving depth map ..." << endl;
-        imwrite(argv[1] + "/depth/depth_" + std::to_string(index+1) + ".png", depth);
+        imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth);
         waitKey(1);
     }
 
