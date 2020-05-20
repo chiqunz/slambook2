@@ -157,10 +157,10 @@ int main(int argc, char **argv) {
         SE3d pose_curr_TWC = poses_TWC[index];
         SE3d pose_T_C_R = pose_curr_TWC.inverse() * pose_ref_TWC;   // T_C_W * T_W_R = T_C_R
         update(ref, curr, pose_T_C_R, depth, depth_cov2);
-        imshow("image", curr);
+        // imshow("image", curr);
         cout << "estimation for image " << index << " returns, saving depth map ..." << endl;
         imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth);
-        waitKey(1);
+        // waitKey(1);
     }
 
    
