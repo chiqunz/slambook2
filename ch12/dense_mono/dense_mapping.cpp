@@ -25,13 +25,13 @@ using namespace cv;
 
 // ------------------------------------------------------------------
 // parameters
-const int boarder = 20;         // border pixels
+const int boarder = 0;         // border pixels
 const int width = 640;          // image width
 const int height = 480;         // image height
-const double fx = 481.2f;       // camera parameters
-const double fy = -480.0f;
-const double cx = 319.5f;
-const double cy = 239.5f;
+const double fx = 518.0;       // camera parameters
+const double fy = 519.0;
+const double cx = 325.5;
+const double cy = 253.5;
 const int ncc_window_size = 3;    // NCC windows half size
 const int ncc_area = (2 * ncc_window_size + 1) * (2 * ncc_window_size + 1);
 const double min_cov = 0.1;
