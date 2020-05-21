@@ -143,27 +143,34 @@ int main(int argc, char **argv) {
     }
     cout << "read total " << color_image_files.size() << " files." << endl;
 
-    Mat ref = imread(color_image_files[0], 0);                // gray-scale image
-    SE3d pose_ref_TWC = poses_TWC[0];
-    double init_depth = 3;    // intializaiton
-    double init_cov2 = 1;
-    Mat depth(height, width, CV_64F, init_depth);
-    Mat depth_cov2(height, width, CV_64F, init_cov2);
-
-    for (int index = 1; index < color_image_files.size(); index++) {
+    for (int img_i = 0; img_i < color_image_files.size(); img_i++) {
         cout << "*** Processing image " << index << " ***" << endl;
-        Mat curr = imread(color_image_files[index], 0);
-        if (curr.data == nullptr) continue;
-        SE3d pose_curr_TWC = poses_TWC[index];
-        SE3d pose_T_C_R = pose_curr_TWC.inverse() * pose_ref_TWC;   // T_C_W * T_W_R = T_C_R
-        update(ref, curr, pose_T_C_R, depth, depth_cov2);
-        // imshow("image", curr);
-        cout << "estimation for image " << index << " returns, saving depth map ..." << endl;
-        // cout << "depth = "<< endl << " " << depth << endl << endl;
-	imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth/init_depth*255);
-        // waitKey(1);
-    }
 
+        Mat ref = imread(color_image_files[0], 0);                // gray-scale image
+        SE3d pose_ref_TWC = poses_TWC[0];
+        double init_depth = 3;    // intializaiton
+        double init_cov2 = 1;
+        Mat depth(height, width, CV_64F, init_depth);
+        Mat depth_cov2(height, width, CV_64F, init_cov2);
+
+        for (int index = 1; index < color_image_files.size(); index++) {
+            Mat curr = imread(color_image_files[index], 0);
+            if (curr.data == nullptr) continue;
+            SE3d pose_curr_TWC = poses_TWC[index];
+            SE3d pose_T_C_R = pose_curr_TWC.inverse() * pose_ref_TWC;   // T_C_W * T_W_R = T_C_R
+            update(ref, curr, pose_T_C_R, depth, depth_cov2);
+            // imshow("image", curr);
+            cout << "estimation of image " << index << "..." << endl;
+            // cout << "depth = "<< endl << " " << depth << endl << endl;
+            // waitKey(1);
+        }
+
+        imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(img_i) + ".png", depth/init_depth*255);
+        color_image_files.push_back(color_image_files.first());
+        color_image_files.erase(color_image_files.begin());
+        poses_TWC.push_back(poses_TWC.fist());
+        poses_TWC.erase(poses_TWC.first());
+    }
    
     cout << "done." << endl;
 
