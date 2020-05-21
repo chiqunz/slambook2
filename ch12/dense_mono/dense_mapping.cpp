@@ -145,8 +145,8 @@ int main(int argc, char **argv) {
 
     Mat ref = imread(color_image_files[0], 0);                // gray-scale image
     SE3d pose_ref_TWC = poses_TWC[0];
-    double init_depth = 3.0;    // intializaiton
-    double init_cov2 = 3.0;
+    double init_depth = 3;    // intializaiton
+    double init_cov2 = 1;
     Mat depth(height, width, CV_64F, init_depth);
     Mat depth_cov2(height, width, CV_64F, init_cov2);
 
@@ -159,7 +159,8 @@ int main(int argc, char **argv) {
         update(ref, curr, pose_T_C_R, depth, depth_cov2);
         // imshow("image", curr);
         cout << "estimation for image " << index << " returns, saving depth map ..." << endl;
-        imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth);
+        cout << "depth = "<< endl << " " << depth << endl << endl;
+	imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth*1000);
         // waitKey(1);
     }
 
