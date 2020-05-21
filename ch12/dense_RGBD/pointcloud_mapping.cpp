@@ -40,10 +40,10 @@ int main(int argc, char **argv) {
 
     // 计算点云并拼接
     // 相机内参 
-    double cx = 319.5;
-    double cy = 239.5;
-    double fx = 481.2;
-    double fy = -480.0;
+    double cx = 322.57114;
+    double cy = 240.28627;
+    double fx = 502.50302;
+    double fy = 502.66037;
     double depthScale = 5000.0;
 
     cout << "正在将图像转换为点云..." << endl;
