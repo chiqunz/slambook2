@@ -143,33 +143,34 @@ int main(int argc, char **argv) {
     }
     cout << "read total " << color_image_files.size() << " files." << endl;
 
-    for (int img_i = 0; img_i < color_image_files.size(); img_i++) {
-        cout << "*** Processing image " << img_i << " ***" << endl;
+    std::vector<int> image_list;
+    // Setting values
+    for (int i = 0; i < color_image_files.size(); i++)
+    {
+        image_list.push_back(i);
+    }
 
-        Mat ref = imread(color_image_files[0], 0);                // gray-scale image
-        SE3d pose_ref_TWC = poses_TWC[0];
-        double init_depth = 3;    // intializaiton
-        double init_cov2 = 1;
+    double init_depth = 3;    // intializaiton
+    double init_cov2 = 1;
+    for (int img_i = 0; img_i < color_image_files.size(); img_i++) {
+        cout << "*** Processing image " << image_list.at(0) << " ***" << endl;
+
+        Mat ref = imread(color_image_files[image_list.at(0)], 0);                // gray-scale image
+        SE3d pose_ref_TWC = poses_TWC[image_list.at(0)];
         Mat depth(height, width, CV_64F, init_depth);
         Mat depth_cov2(height, width, CV_64F, init_cov2);
 
-        for (int index = 1; index < color_image_files.size(); index++) {
-            Mat curr = imread(color_image_files[index], 0);
+        for (int index = 1; index < image_list.size(); index++) {
+            Mat curr = imread(color_image_files[image_list.at(index)], 0);
             if (curr.data == nullptr) continue;
-            SE3d pose_curr_TWC = poses_TWC[index];
+            SE3d pose_curr_TWC = poses_TWC[image_list.at(index)];
             SE3d pose_T_C_R = pose_curr_TWC.inverse() * pose_ref_TWC;   // T_C_W * T_W_R = T_C_R
             update(ref, curr, pose_T_C_R, depth, depth_cov2);
-            // imshow("image", curr);
-            cout << "estimation of image " << index << "..." << endl;
-            // cout << "depth = "<< endl << " " << depth << endl << endl;
-            // waitKey(1);
+            cout << "estimation of image " << image_list.at(index) << "..." << endl;
         }
 
-        imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(img_i) + ".png", depth/init_depth*255);
-        color_image_files.push_back(color_image_files.front());
-        color_image_files.erase(color_image_files.begin());
-        poses_TWC.push_back(poses_TWC.front());
-        poses_TWC.erase(poses_TWC.begin());
+        imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(image_list.at(0)) + ".png", depth/init_depth*255);
+        std::rotate(image_list.begin(), image_list.begin() + 1, image_list.end());
     }
    
     cout << "done." << endl;
