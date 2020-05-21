@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
         // imshow("image", curr);
         cout << "estimation for image " << index << " returns, saving depth map ..." << endl;
         cout << "depth = "<< endl << " " << depth << endl << endl;
-	imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth*1000);
+	imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(index+1) + ".png", depth/init_depth*255);
         // waitKey(1);
     }
 
