@@ -167,9 +167,9 @@ int main(int argc, char **argv) {
 
         imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(img_i) + ".png", depth/init_depth*255);
         color_image_files.push_back(color_image_files.front());
-        color_image_files.erase(color_image_files.front());
+        color_image_files.erase(color_image_files.begin());
         poses_TWC.push_back(poses_TWC.front());
-        poses_TWC.erase(poses_TWC.front());
+        poses_TWC.erase(poses_TWC.begin());
     }
    
     cout << "done." << endl;
