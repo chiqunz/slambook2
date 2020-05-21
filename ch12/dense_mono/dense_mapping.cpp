@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
     cout << "read total " << color_image_files.size() << " files." << endl;
 
     for (int img_i = 0; img_i < color_image_files.size(); img_i++) {
-        cout << "*** Processing image " << index << " ***" << endl;
+        cout << "*** Processing image " << img_i << " ***" << endl;
 
         Mat ref = imread(color_image_files[0], 0);                // gray-scale image
         SE3d pose_ref_TWC = poses_TWC[0];
