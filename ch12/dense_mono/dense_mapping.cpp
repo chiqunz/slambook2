@@ -152,7 +152,7 @@ int main(int argc, char **argv) {
 
     double init_depth = 3;    // intializaiton
     double init_cov2 = 3;
-    for (int img_i = 0; img_i < color_image_files.size(); img_i++) {
+    for (int img_i = 0; img_i < 1; img_i++) {
         cout << "*** Processing image " << image_list.at(0) << " ***" << endl;
 
         Mat ref = imread(color_image_files[image_list.at(0)], 0);                // gray-scale image
