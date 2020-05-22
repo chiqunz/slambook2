@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
             for (int u = 0; u < color.cols; u++) {
                 unsigned int d = depth.ptr<unsigned short>(v)[u]; // 深度值
                 if (d == 3000) {
-		    // cout << "WARNING" << endl;
+		    //cout << "WARNING" << endl;
 		    continue; // 为0表示没有测量到
 		}
                 Eigen::Vector3d point;
@@ -85,27 +85,32 @@ int main(int argc, char **argv) {
             }
         // depth filter and statistical removal 
         PointCloud::Ptr tmp(new PointCloud);
-        pcl::StatisticalOutlierRemoval<PointT> statistical_filter;
-    	statistical_filter.setMeanK(3);
-        statistical_filter.setStddevMulThresh(0.1);
+        
+	pcl::StatisticalOutlierRemoval<PointT> statistical_filter;
+    	statistical_filter.setMeanK(50);
+        statistical_filter.setStddevMulThresh(1);
         statistical_filter.setInputCloud(current);
         statistical_filter.filter(*tmp);
-        (*pointCloud) += *tmp;
+	(*pointCloud) += *tmp;
+	
+
+	// (*pointCloud) += *current;
     }
 
     pointCloud->is_dense = false;
     cout << "点云共有" << pointCloud->size() << "个点." << endl;
 
+    
     // voxel filter 
     pcl::VoxelGrid<PointT> voxel_filter;
-    double resolution = 0.03;
+    double resolution = 0.01;
     voxel_filter.setLeafSize(resolution, resolution, resolution);       // resolution
     PointCloud::Ptr tmp(new PointCloud);
     voxel_filter.setInputCloud(pointCloud);
     voxel_filter.filter(*tmp);
     tmp->swap(*pointCloud);
-
     cout << "滤波之后，点云共有" << pointCloud->size() << "个点." << endl;
+    
 
     pcl::io::savePCDFileBinary("map.pcd", *pointCloud);
     return 0;
