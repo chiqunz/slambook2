@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
     }
 
     double init_depth = 3;    // intializaiton
-    double init_cov2 = 1;
+    double init_cov2 = 3;
     for (int img_i = 0; img_i < color_image_files.size(); img_i++) {
         cout << "*** Processing image " << image_list.at(0) << " ***" << endl;
 
@@ -168,8 +168,8 @@ int main(int argc, char **argv) {
             update(ref, curr, pose_T_C_R, depth, depth_cov2);
             cout << "estimation of image " << image_list.at(index) << "..." << endl;
         }
-
-        imwrite(std::string(argv[1]) + "/depth/depth_" + std::to_string(image_list.at(0)) + ".png", depth/init_depth*255);
+	depth.convertTo(depth,CV_16UC1,1000);
+        imwrite(std::string(argv[1]) + "/depth/" + std::to_string(image_list.at(0)) + ".png", depth);
         std::rotate(image_list.begin(), image_list.begin() + 1, image_list.end());
     }
    

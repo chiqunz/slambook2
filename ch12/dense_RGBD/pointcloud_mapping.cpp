@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -17,20 +18,20 @@ int main(int argc, char **argv) {
     vector<cv::Mat> colorImgs, depthImgs;    // 彩色图和深度图
     vector<Eigen::Isometry3d> poses;         // 相机位姿
 
-    ifstream fin("./data/pose.txt");
+    ifstream fin("./" + std::string(argv[1]) + "/pose.txt");
     if (!fin) {
         cerr << "cannot find pose file" << endl;
         return 1;
     }
 
-    for (int i = 0; i < 5; i++) {
-        boost::format fmt("./data/%s/%d.%s"); //图像文件格式
-        colorImgs.push_back(cv::imread((fmt % "color" % (i + 1) % "png").str()));
-        depthImgs.push_back(cv::imread((fmt % "depth" % (i + 1) % "png").str(), -1)); // 使用-1读取原始图像
+    for (int i = 0; i < atoi(argv[2]); i++) {
+        boost::format fmt("./" + std::string(argv[1]) + "/%s/%d.%s"); //图像文件格式
+        colorImgs.push_back(cv::imread((fmt % "color" % (i) % "png").str()));
+        depthImgs.push_back(cv::imread((fmt % "depth" % (i) % "png").str(), -1)); // 使用-1读取原始图像
 
         double data[7] = {0};
-        for (int i = 0; i < 7; i++) {
-            fin >> data[i];
+        for (int j = 0; j < 7; j++) {
+            fin >> data[j];
         }
         Eigen::Quaterniond q(data[6], data[3], data[4], data[5]);
         Eigen::Isometry3d T(q);
@@ -44,9 +45,9 @@ int main(int argc, char **argv) {
     double cy = 240.28627;
     double fx = 502.50302;
     double fy = 502.66037;
-    double depthScale = 5000.0;
+    double depthScale = 1000.0;
 
-    cout << "正在将图像转换为点云..." << endl;
+    cout << "All data are read..." << endl;
 
     // 定义点云使用的格式：这里用的是XYZRGB
     typedef pcl::PointXYZRGB PointT;
@@ -54,16 +55,19 @@ int main(int argc, char **argv) {
 
     // 新建一个点云
     PointCloud::Ptr pointCloud(new PointCloud);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < atoi(argv[2]); i++) {
         PointCloud::Ptr current(new PointCloud);
-        cout << "转换图像中: " << i + 1 << endl;
+        cout << "Processing " << i << endl;
         cv::Mat color = colorImgs[i];
         cv::Mat depth = depthImgs[i];
         Eigen::Isometry3d T = poses[i];
         for (int v = 0; v < color.rows; v++)
             for (int u = 0; u < color.cols; u++) {
                 unsigned int d = depth.ptr<unsigned short>(v)[u]; // 深度值
-                if (d == 0) continue; // 为0表示没有测量到
+                if (d == 3000) {
+		    // cout << "WARNING" << endl;
+		    continue; // 为0表示没有测量到
+		}
                 Eigen::Vector3d point;
                 point[2] = double(d) / depthScale;
                 point[0] = (u - cx) * point[2] / fx;
@@ -82,8 +86,8 @@ int main(int argc, char **argv) {
         // depth filter and statistical removal 
         PointCloud::Ptr tmp(new PointCloud);
         pcl::StatisticalOutlierRemoval<PointT> statistical_filter;
-        statistical_filter.setMeanK(50);
-        statistical_filter.setStddevMulThresh(1.0);
+    	statistical_filter.setMeanK(3);
+        statistical_filter.setStddevMulThresh(0.1);
         statistical_filter.setInputCloud(current);
         statistical_filter.filter(*tmp);
         (*pointCloud) += *tmp;
