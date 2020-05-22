@@ -85,16 +85,17 @@ int main(int argc, char **argv) {
             }
         // depth filter and statistical removal 
         PointCloud::Ptr tmp(new PointCloud);
-        
+       
+       /***	
 	pcl::StatisticalOutlierRemoval<PointT> statistical_filter;
     	statistical_filter.setMeanK(50);
         statistical_filter.setStddevMulThresh(1);
         statistical_filter.setInputCloud(current);
         statistical_filter.filter(*tmp);
 	(*pointCloud) += *tmp;
-	
+	***/
 
-	// (*pointCloud) += *current;
+	(*pointCloud) += *current;
     }
 
     pointCloud->is_dense = false;

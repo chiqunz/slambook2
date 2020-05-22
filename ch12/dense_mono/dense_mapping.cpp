@@ -34,8 +34,8 @@ const double cx = 322.57114f;
 const double cy = 240.28627f;
 const int ncc_window_size = 3;    // NCC windows half size
 const int ncc_area = (2 * ncc_window_size + 1) * (2 * ncc_window_size + 1);
-const double min_cov = 0.1;
-const double max_cov = 10;
+const double min_cov = 0.05;
+const double max_cov = 5;
 
 // ------------------------------------------------------------------
 
@@ -150,8 +150,8 @@ int main(int argc, char **argv) {
         image_list.push_back(i);
     }
 
-    double init_depth = 3;    // intializaiton
-    double init_cov2 = 3;
+    double init_depth = 1;    // intializaiton
+    double init_cov2 = 0.5;
     for (int img_i = 0; img_i < 1; img_i++) {
         cout << "*** Processing image " << image_list.at(0) << " ***" << endl;
 
@@ -240,7 +240,7 @@ bool epipolarSearch(
     const double &depth_mu, const double &depth_cov,
     Vector2d &pt_curr, Vector2d &epipolar_direction) {
     Vector3d f_ref = px2cam(pt_ref);
-    f_ref.normalize();
+    // f_ref.normalize();
     Vector3d P_ref = f_ref * depth_mu;
 
     Vector2d px_mean_curr = cam2px(T_C_R * P_ref); // projection based on depth
@@ -318,9 +318,9 @@ bool updateDepthFilter(
     // calculate depth based on trianglation
     SE3d T_R_C = T_C_R.inverse();
     Vector3d f_ref = px2cam(pt_ref);
-    f_ref.normalize();
+    // f_ref.normalize();
     Vector3d f_curr = px2cam(pt_curr);
-    f_curr.normalize();
+    // f_curr.normalize();
 
     // d_ref * f_ref = d_cur * ( R_RC * f_cur ) + t_RC
     // f2 = R_RC * f_cur
@@ -348,7 +348,7 @@ bool updateDepthFilter(
     double alpha = acos(f_ref.dot(t) / t_norm);
     double beta = acos(-a.dot(t) / (a_norm * t_norm));
     Vector3d f_curr_prime = px2cam(pt_curr + epipolar_direction);
-    f_curr_prime.normalize();
+    // f_curr_prime.normalize();
     double beta_prime = acos(f_curr_prime.dot(-t) / t_norm);
     double gamma = M_PI - alpha - beta_prime;
     double p_prime = t_norm * sin(beta_prime) / sin(gamma);
